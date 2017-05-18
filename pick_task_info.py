@@ -34,10 +34,10 @@ def make_picking_list(item_loc_path, order_path):
 
 def search_item(item_loc_json, target):
     """Searching target item in which bin."""
-    for bin_id in item_loc_json["bins"]:
-        for item in bin_id["contents"]:
+    for bin in item_loc_json["bins"]:
+        for item in bin["contents"]:
             if item == target:
-                return bin_id["bin_id"]
+                return bin["bin_id"]
     return None
 
 def _test():
