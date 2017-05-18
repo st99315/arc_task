@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
-"""Get information of item that item locate in which bin and place to which box."""
-"""in picking challenage."""
+"""Get location of item in which bin and place into which box."""
+"""for picking challenage."""
 
 from __future__ import print_function
 from os import path
@@ -9,39 +9,39 @@ from json_rw import read_json
 
 
 class PickInfo:
-    """Storage picking information."""
+    """Storage information of picking task."""
 
     def __init__(self, item="", form_bin="", to_box=""):
-        """Init object of information of picking."""
+        """Init object for information of picking task."""
         self.item = item
         self.from_bin = form_bin
         self.to_box = to_box
 
 
 def make_picking_list(item_loc_path, order_path):
-    """Using item location file and order file to make list for picking."""
+    """Using item location file and order file to make a list for picking task."""
     item_loc_json = read_json(item_loc_path)
     order_json = read_json(order_path)
 
     pick_list = list()
     for order in order_json["orders"]:
+        box_id = order["size_id"]
         for item in order["contents"]:
-            bin = search_item(item_loc_json, item)
-            if bin is not None:
-                pick_list.append(PickInfo(item, bin, order["size_id"]))
+            bin_id = search_item(item_loc_json, item)
+            if bin_id is not None:
+                pick_list.append(PickInfo(item, bin_id, box_id))
     return pick_list
 
 def search_item(item_loc_json, target):
     """Searching target item in which bin."""
-    for bin in item_loc_json["bins"]:
-        for item in bin["contents"]:
+    for bin_id in item_loc_json["bins"]:
+        for item in bin_id["contents"]:
             if item == target:
-                return bin["bin_id"]
+                return bin_id["bin_id"]
     return None
 
-
-if __name__ == "__main__":
-
+def _test():
+    """Testing function."""
     direcotry = "./example_pick_task"
     ilf = "item_location_file.json"
     orf = "order_file.json"
@@ -52,3 +52,7 @@ if __name__ == "__main__":
     pick_list = make_picking_list(item_loc_path, order_path)
     for info in pick_list:
         print("item:", info.item, "from_bin:", info.from_bin, "to_box:", info.to_box)
+    
+
+if __name__ == "__main__":
+    _test()
